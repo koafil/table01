@@ -1,30 +1,31 @@
-<script setup>
-import HelloWorld from './components/HelloWorld.vue'
-</script>
-
 <template>
-  <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
-  </div>
-  <HelloWorld msg="Vite + Vue" />
+  <el-table :data="data" style="width: 100%">
+  <el-table-column prop="id" label="#" width="70" sortable/>
+  <el-table-column prop="title" label="Название" width="180" />
+  <el-table-column prop="body" label="Текст" />
+  </el-table>
+  <el-pagination background layout="prev, pager, next"
+                 :pager-count="4"
+                 :page-size="limit"
+                 v-model:current-page="page"
+                 :total="100" />
 </template>
 
+<script setup>
+
+import {computed, ref} from "vue";
+import { useFetch} from "@vueuse/core";
+
+const limit = ref(5)
+const page  = ref(1)
+const url = computed(()=>{
+  return `https://jsonplaceholder.typicode.com/posts?_page=${page.value}&_limit=${limit.value}`
+})
+const {isFetching, error, data} = useFetch(url, {
+  refetch: true
+}).json();
+</script>
+
 <style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
-}
+
 </style>
